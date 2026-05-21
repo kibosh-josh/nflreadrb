@@ -5,22 +5,21 @@ RSpec.describe Nflreadrb do
     expect(Nflreadrb::VERSION).not_to be nil
   end
 
-  it "successfully fetches and parses player stats from nflverse", :integration do
-    puts "Streaming player stats parquet file from GitHub..."
-    stats = Nflreadrb.load_player_stats
+  it "successfully fetches player stats filtered by a specific year", :integration do
+    puts "Streaming and filtering 2024 player stats..."
+    stats = Nflreadrb.load_player_stats(2024)
 
     expect(stats).to be_an(Array)
     expect(stats.empty?).to be false
 
-    # 🔍 DEBUG LINES: Let's see what Polars gave us
-    puts "--- DATA DIAGNOSTIC ---"
-    puts "Available Columns (Keys): #{stats.first.keys}"
-    puts "Sample Row Data: #{stats.first}"
-    puts "-----------------------"
+    # Extract all unique values from the 'season' column to prove the filter worked
+    distinct_seasons = stats.map { |row| row["season"] }.uniq
+    expect(distinct_seasons).to eq([2024])
 
-    # Let's find Patrick Mahomes' stats in the dataset to prove it works
+    # Verify Patrick Mahomes is present in the filtered 2024 subset
     mahomes_records = stats.select { |row| row["player_name"] == "P.Mahomes" }
+    expect(mahomes_records.any?).to be true
 
-    puts mahomes_records
+    puts "Success! Found #{mahomes_records.count} stats entries exclusively for the 2024 season."
   end
 end
