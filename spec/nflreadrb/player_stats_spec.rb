@@ -5,7 +5,7 @@ module Nflreadrb
     describe '.load' do
       subject { described_class.load(year:) }
 
-      let(:year) { 2024 }
+      let(:year) { 2025 }
 
       context 'default without passing in columns' do
         it 'successfully fetches and filters player stats by year', :integration do
@@ -13,7 +13,7 @@ module Nflreadrb
           expect(subject.empty?).to be false
 
           distinct_seasons = subject.map { |row| row['season'] }.uniq
-          expect(distinct_seasons).to eq([2024])
+          expect(distinct_seasons).to eq([2025])
 
           mahomes_records = subject.select { |row| row['player_name'] == 'P.Mahomes' }
           expect(mahomes_records.any?).to be true

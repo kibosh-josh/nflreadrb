@@ -5,15 +5,15 @@ module Nflreadrb
     describe '.load' do
       subject { described_class.load(year:) }
 
-      let(:year) { 2024 }
+      let(:year) { 2025 }
 
       context 'default without passing in columns' do
         it 'successfully fetches weekly rosters for a specific year', :integration do
           expect(subject).to be_an(Array)
-          expect(subject.length).to eq(46579)
+          expect(subject.length).to eq(46849)
 
           first_record = subject.first
-          expect(first_record['season']).to eq(2024)
+          expect(first_record['season']).to eq(2025)
           expect(first_record['depth_chart_position']).not_to be_nil
           expect(first_record['jersey_number']).not_to be_nil
         end

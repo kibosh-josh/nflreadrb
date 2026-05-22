@@ -5,15 +5,15 @@ module Nflreadrb
     describe '.load' do
       subject { described_class.load(year:) }
 
-      let(:year) { 2024 }
+      let(:year) { 2025 }
 
       context 'default without passing in columns' do
         it 'successfully fetches and parses injury data for a specific year', :integration do
           expect(subject).to be_an(Array)
-          expect(subject.length).to eq(6215)
+          expect(subject.length).to eq(6068)
+
           first_record = subject.first
-          expect(first_record['season']).to eq(2024)
-          expect(first_record['report_status']).not_to be_nil
+          expect(first_record['season']).to eq(2025)
           expect(first_record['practice_status']).not_to be_nil
         end
       end

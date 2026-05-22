@@ -37,7 +37,11 @@ module Nflreadrb
           File.open(destination, 'wb') { |local_file| local_file.write(remote_file.read) }
         end
       rescue OpenURI::HTTPError => e
-        raise Error, "Failed to fetch data from url: #{url}: #{e.message}"
+        if e.message.include?('404')
+          raise NotFoundError, "Data file does not exist at url: #{url}: #{e.message}"
+        else
+          raise Error, "Failed to fetch data from url: #{url}: #{e.message}"
+        end
       end
     end
   end

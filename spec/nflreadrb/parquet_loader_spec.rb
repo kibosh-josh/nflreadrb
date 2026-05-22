@@ -6,7 +6,7 @@ module Nflreadrb
       subject { described_class.fetch_and_filter(url:, year:) }
 
       let(:url) { 'https://example.com/nfl_data.parquet' }
-      let(:year) { 2024 }
+      let(:year) { 2025 }
       let(:dummy_path) { '/dummy/cache/path/nfl_data.parquet' }
       let(:mock_dataframe) { instance_double(Polars::DataFrame) }
       let(:mock_filtered_dataframe) { instance_double(Polars::DataFrame, to_a: [{ 'season' => 2024, 'player' => 'P.Mahomes' }]) }

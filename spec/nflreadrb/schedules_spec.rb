@@ -5,7 +5,7 @@ module Nflreadrb
     describe '.load' do
       subject { described_class.load(year:) }
 
-      let(:year) { 2024 }
+      let(:year) { 2025 }
 
       context 'default without passing in columns' do
         it 'successfully fetches and parses schedule data for a specific year', :integration do
@@ -13,7 +13,7 @@ module Nflreadrb
           expect(subject.length).to eq(285)
 
           first_record = subject.first
-          expect(first_record['season']).to eq(2024)
+          expect(first_record['season']).to eq(2025)
           expect(first_record['game_id']).not_to be_nil
           expect(first_record['home_team']).not_to be_nil
           expect(first_record['away_team']).not_to be_nil

@@ -14,6 +14,7 @@ require_relative 'nflreadrb/snap_counts'
 
 module Nflreadrb
   class Error < StandardError; end
+  class NotFoundError < StandardError; end
 
   class << self
     def load_player_stats(year:, columns: nil)
