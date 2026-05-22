@@ -1,25 +1,38 @@
 # frozen_string_literal: true
 
-RSpec.describe Nflreadrb do
-  it "has a version number" do
-    expect(Nflreadrb::VERSION).not_to be nil
-  end
+module Nflreadrb
+  RSpec.describe Nflreadrb do
+    it 'has a version number' do
+      expect(Nflreadrb::VERSION).not_to be nil
+    end
 
-  it "successfully fetches player stats filtered by a specific year", :integration do
-    puts "Streaming and filtering 2024 player stats..."
-    stats = Nflreadrb.load_player_stats(2024)
+    describe '.load_player_stats', :integration do
+      subject { described_class.load_player_stats(year:) }
 
-    expect(stats).to be_an(Array)
-    expect(stats.empty?).to be false
+      let(:year) { 2024 }
 
-    # Extract all unique values from the 'season' column to prove the filter worked
-    distinct_seasons = stats.map { |row| row["season"] }.uniq
-    expect(distinct_seasons).to eq([2024])
+      before { allow(PlayerStats).to receive(:load).with(year:).and_call_original }
 
-    # Verify Patrick Mahomes is present in the filtered 2024 subset
-    mahomes_records = stats.select { |row| row["player_name"] == "P.Mahomes" }
-    expect(mahomes_records.any?).to be true
 
-    puts "Success! Found #{mahomes_records.count} stats entries exclusively for the 2024 season."
+      it 'delegates to the PlayerStats engine' do
+        expect(subject).to be_an(Array)
+        expect(subject.length).to eq(5597)
+        expect(PlayerStats).to have_received(:load).exactly(1).time.with(year: 2024)
+      end
+    end
+
+    describe '.load_rosters', :integration do
+      subject { described_class.load_rosters(year:) }
+
+      let(:year) { 2024 }
+
+      before { allow(WeeklyRosters).to receive(:load).with(year:).and_call_original }
+
+      it 'delegates to the WeeklyRosters engine' do
+        expect(subject).to be_an(Array)
+        expect(subject.length).to eq(46579)
+        expect(WeeklyRosters).to have_received(:load).exactly(1).time.with(year: 2024)
+      end
+    end
   end
 end
