@@ -2,12 +2,8 @@
 
 module Nflreadrb
   class SnapCounts < BaseLoader
-    def self.load(year:)
-      new(year:).load_data
-    end
-
-    def initialize(year:)
-      @year = year
+    def initialize(year:, columns:)
+      super(year:, columns:)
       @url = "#{Constants::BASE_URL}/snap_counts/snap_counts_#{year}.parquet"
     end
     private_class_method :new

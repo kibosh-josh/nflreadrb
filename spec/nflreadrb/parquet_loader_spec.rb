@@ -3,11 +3,10 @@
 module Nflreadrb
   RSpec.describe ParquetLoader do
     describe '.fetch_and_filter' do
-      subject { described_class.fetch_and_filter(url:, year:, column_name:) }
+      subject { described_class.fetch_and_filter(url:, year:) }
 
       let(:url) { 'https://example.com/nfl_data.parquet' }
       let(:year) { 2024 }
-      let(:column_name) { 'season' }
 
       let(:mock_remote_file) { instance_double(StringIO, read: 'parquet_binary_stream') }
       let(:mock_dataframe) { instance_double(Polars::DataFrame) }
@@ -19,15 +18,19 @@ module Nflreadrb
         allow(Polars).to receive(:col).and_call_original
       end
 
-      context 'when using the default column name' do
-        subject { described_class.fetch_and_filter(url:, year:) }
+      context 'when passing in columns to filter on' do
+        subject { described_class.fetch_and_filter(url:, year:, columns:) }
+
+        let(:columns) { [:player_id, :stats] }
+        let(:mock_selected_dataframe) { instance_double(Polars::DataFrame, to_a: [{ 'player_id' => '00-0038122', 'stats' => 'mvp' }]) }
 
         before do
           allow(mock_dataframe).to receive(:filter).and_return(mock_filtered_dataframe)
+          allow(mock_filtered_dataframe).to receive(:select).with(['player_id', 'stats']).and_return(mock_selected_dataframe)
         end
 
-        it 'successfully filters by the default season column and returns an array' do
-          expect(subject).to eq([{ 'season' => 2024, 'player' => 'P.Mahomes' }])
+        it 'successfully filters by the default season column, slices columns, and returns an array' do
+          expect(subject).to eq([{ 'player_id' => '00-0038122', 'stats' => 'mvp' }])
         end
       end
 
@@ -42,18 +45,21 @@ module Nflreadrb
         it 'dynamically passes the specified year to the filter expression' do
           expect(subject).to eq([{ 'season' => 2023, 'player' => 'L.Jackson' }])
         end
-      end
 
-      context 'when overriding with a custom column name' do
-        let(:column_name) { 'draft_year' }
-        let(:mock_filtered_dataframe) { instance_double(Polars::DataFrame, to_a: [{ 'draft_year' => 2024, 'player' => 'C.Williams' }]) }
+        context 'and also passing in columns to filter on' do
+          subject { described_class.fetch_and_filter(url:, year:, columns:) }
 
-        before do
-          allow(mock_dataframe).to receive(:filter).and_return(mock_filtered_dataframe)
-        end
+          let(:columns) { [:player_id, :stats] }
+          let(:mock_selected_dataframe) { instance_double(Polars::DataFrame, to_a: [{ 'player_id' => '00-0038122', 'stats' => 'mvp' }]) }
 
-        it 'overrides the default column and matches against the custom column name' do
-          expect(subject).to eq([{ 'draft_year' => 2024, 'player' => 'C.Williams' }])
+          before do
+            allow(mock_dataframe).to receive(:filter).and_return(mock_filtered_dataframe)
+            allow(mock_filtered_dataframe).to receive(:select).with(['player_id', 'stats']).and_return(mock_selected_dataframe)
+          end
+
+          it 'successfully filters by the default season column, slices columns, and returns an array' do
+            expect(subject).to eq([{ 'player_id' => '00-0038122', 'stats' => 'mvp' }])
+          end
         end
       end
 
