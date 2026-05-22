@@ -7,13 +7,12 @@ module Nflreadrb
 
       let(:url) { 'https://example.com/nfl_data.parquet' }
       let(:year) { 2024 }
-
-      let(:mock_remote_file) { instance_double(StringIO, read: 'parquet_binary_stream') }
+      let(:dummy_path) { '/dummy/cache/path/nfl_data.parquet' }
       let(:mock_dataframe) { instance_double(Polars::DataFrame) }
       let(:mock_filtered_dataframe) { instance_double(Polars::DataFrame, to_a: [{ 'season' => 2024, 'player' => 'P.Mahomes' }]) }
 
       before do
-        allow(URI).to receive(:open).with(url).and_yield(mock_remote_file)
+        allow(LocalCache).to receive(:path_for).with(url).and_return(dummy_path)
         allow(Polars).to receive(:read_parquet).and_return(mock_dataframe)
         allow(Polars).to receive(:col).and_call_original
       end
@@ -65,11 +64,11 @@ module Nflreadrb
 
       context 'when the targeted URL returns a network error' do
         before do
-          allow(URI).to receive(:open).with(url).and_raise(OpenURI::HTTPError.new('404 Not Found', nil))
+          allow(LocalCache).to receive(:path_for).with(url).and_raise(Error.new("Failed to fetch data from url: #{url}: 404 Not Found"))
         end
 
         it 'rescues the exception and raises a custom gem error containing the broken URL' do
-          expect { subject }.to raise_error(Nflreadrb::Error, /Failed to fetch data from url: #{url}/)
+          expect { subject }.to raise_error(Error, /Failed to fetch data from url: #{url}/)
         end
       end
     end

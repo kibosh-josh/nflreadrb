@@ -6,6 +6,17 @@ module Nflreadrb
       expect(Nflreadrb::VERSION).not_to be nil
     end
 
+    describe 'Architectural Guardrails' do
+      it 'enforces information hiding by keeping the constructor private on domain loaders' do
+        expect { BaseLoader.new(year: 2024, columns: nil) }.to raise_error(NoMethodError)
+        expect { Injuries.new(year: 2024, columns: nil) }.to raise_error(NoMethodError)
+        expect { PlayerStats.new(year: 2024, columns: nil) }.to raise_error(NoMethodError)
+        expect { Schedules.new(year: 2024, columns: nil) }.to raise_error(NoMethodError)
+        expect { SnapCounts.new(year: 2024, columns: nil) }.to raise_error(NoMethodError)
+        expect { WeeklyRosters.new(year: 2024, columns: nil) }.to raise_error(NoMethodError)
+      end
+    end
+
     describe '.load_player_stats' do
       subject { described_class.load_player_stats(year:) }
 
