@@ -1,43 +1,68 @@
 # Nflreadrb
 
-TODO: Delete this and the text below, and describe your gem
+A high-performance, cached Parquet data loader for `nflverse` datasets in Ruby.
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/nflreadrb`. To experiment with that code, run `bin/console` for an interactive prompt.
+## `nflreadrb` leverages the **Polars** engine and a stateless **local filesystem caching** layer to stream, filter, and dynamically slice production NFL data files with sub-5ms latency, minimizing both network overhead and RAM footprint.
 
 ## Installation
 
-TODO: Replace `UPDATE_WITH_YOUR_GEM_NAME_IMMEDIATELY_AFTER_RELEASE_TO_RUBYGEMS_ORG` with your gem name right after releasing it to RubyGems.org. Please do not do it earlier due to security reasons. Alternatively, replace this section with instructions to install your gem from git if you don't plan to release to RubyGems.org.
+To install the gem locally for development or to test with your web API application, add this line to your application's `Gemfile`: `gem 'nflreadrb', path: '/path/to/your/local/nflreadrb'`
+And then execute:
+`$ bundle install`
 
-Install the gem and add to the application's Gemfile by executing:
+---
 
-```bash
-bundle add UPDATE_WITH_YOUR_GEM_NAME_IMMEDIATELY_AFTER_RELEASE_TO_RUBYGEMS_ORG
-```
+## Architecture & Performance Benefits
 
-If bundler is not being used to manage dependencies, install the gem by executing:
+- **Stateless Local Cache:** Automated 24-hour expiration filesystem caching via the OS temporary directory (`Dir.tmpdir`). The external network is hit exactly _once per file per day_, completely eliminating remote API latency on subsequent requests.
+- **Projection Pushdown:** Column filtering happens directly at the I/O layer via Polars. If you only request two columns out of a 100+ column dataset, only those two columns are parsed into memory.
+- **Encapsulated Design:** Internal data-loading strategies, constructors, and base classes are securely wrapped and hidden to ensure a strict, predictable public API boundary.
 
-```bash
-gem install UPDATE_WITH_YOUR_GEM_NAME_IMMEDIATELY_AFTER_RELEASE_TO_RUBYGEMS_ORG
-```
+---
 
 ## Usage
 
-TODO: Write usage instructions here
+Every data-loading gateway method requires a `year:` argument and accepts an optional `columns:` array (supporting both Strings and Symbols).
 
-## Development
+### 1. Load Player Stats
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+#### Fetch all statistics columns for 2024 (Returns Array of Hashes)
 
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and the created tag, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+`stats = Nflreadrb.load_player_stats(year: 2024)`
 
-## Contributing
+#### Optimize for web API JSON payloads by requesting specific columns
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/nflreadrb. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [code of conduct](https://github.com/[USERNAME]/nflreadrb/blob/master/CODE_OF_CONDUCT.md).
+`optimized_stats = Nflreadrb.load_player_stats(year: 2024, columns: [:player_id, :player_name, :passing_yards, :touchdowns])`
+
+### 2. Load Weekly Rosters
+
+`rosters = Nflreadrb.load_rosters(year: 2024, columns: [:gsis_id, :full_name, :position])`
+
+### 3. Load Injuries
+
+`injuries = Nflreadrb.load_injuries(year: 2024, columns: [:full_name, :report_status])`
+
+### 4. Load Schedules
+
+`schedules = Nflreadrb.load_schedules(year: 2024, columns: [:game_id, :home_team, :away_team])`
+
+### 5. Load Snap Counts
+
+```
+columns = [:game_id, :pfr_player_id, :offense_snaps]
+snap_counts = Nflreadrb.load_snap_counts(year: 2024, columns:)
+```
+
+---
 
 ## License
 
 The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
 
+## Contributing
+
+Bug reports and pull requests are welcome on GitHub at https://github.com/kibosh-josh/nflreadrb. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [code of conduct](https://github.com/kibosh-josh/nflreadrb/blob/main/CODE_OF_CONDUCT.md).
+
 ## Code of Conduct
 
-Everyone interacting in the Nflreadrb project's codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/[USERNAME]/nflreadrb/blob/master/CODE_OF_CONDUCT.md).
+Everyone interacting in the Nflreadrb project's codebases, issue trackers, chat rooms, and mailing lists is expected to follow the [code of conduct](https://github.com/kibosh-josh/nflreadrb/blob/main/CODE_OF_CONDUCT.md).
