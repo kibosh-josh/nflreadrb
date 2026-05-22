@@ -1,21 +1,15 @@
 # frozen_string_literal: true
 
-require_relative 'constants'
-require_relative 'parquet_loader'
-
 module Nflreadrb
-  class Schedules
-    class << self
-      def load(year:)
-        url = schedules_url
-        ParquetLoader.fetch_and_filter(url:, year:)
-      end
+  class Schedules < BaseLoader
+    def initialize(year:)
+      @year = year
+      @url = "#{Constants::BASE_URL}/schedules/games.parquet"
+    end
+    private_class_method :new
 
-      private
-
-      def schedules_url
-        "#{Constants::BASE_URL}/schedules/games.parquet"
-      end
+    def self.load(year:)
+      new(year:).load_data
     end
   end
 

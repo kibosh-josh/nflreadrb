@@ -6,6 +6,7 @@ require 'polars'
 
 require_relative 'nflreadrb/version'
 require_relative 'nflreadrb/constants'
+require_relative 'nflreadrb/base_loader'
 require_relative 'nflreadrb/player_stats'
 require_relative 'nflreadrb/weekly_rosters'
 require_relative 'nflreadrb/injuries'
