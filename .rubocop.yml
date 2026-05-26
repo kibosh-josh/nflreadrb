@@ -5,4 +5,37 @@ Style/StringLiterals:
   EnforcedStyle: single_quotes
 
 Style/StringLiteralsInInterpolation:
-  EnforcedStyle: double_quotes
+  EnforcedStyle: single_quotes
+
+Layout/SpaceInsideArrayLiteralBrackets:
+  EnforcedStyle: no_space
+  EnforcedStyleForEmptyBrackets: no_space
+
+Style/NumericLiterals:
+  Enabled: false
+
+Style/SymbolArray:
+  Enabled: false
+
+Layout/LineLength:
+  Max: 200
+
+Metrics/BlockLength:
+  AllowedMethods:
+    - describe
+    - context
+    - it
+    - shared_examples
+    - shared_examples_for
+  Exclude:
+    - "spec/**/*_spec.rb"
+
+Metrics/ModuleLength:
+  AllowedMethods:
+    - describe
+    - context
+    - it
+    - shared_examples
+    - shared_examples_for
+  Exclude:
+    - "spec/**/*_spec.rb"

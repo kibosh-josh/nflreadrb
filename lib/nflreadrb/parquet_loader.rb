@@ -39,7 +39,7 @@ module Nflreadrb
     end
 
     def filtered_dataframe_from(dataframe, columns)
-      # 3a. Filter vertically by season. Some data frames do not include a season filter, they are already filtered by season.
+      # 3a. Filter vertically by season. Some data frames do not include a season filter, and are already filtered by season.
       filtered_dataframe = filter_dataframe_vertically(dataframe)
 
       return filtered_dataframe.to_a if columns.nil?
@@ -54,7 +54,6 @@ module Nflreadrb
 
       dataframe.filter(Polars.col(SEASON_FILTER) == year)
     end
-
 
     attr_reader :year, :url, :columns, :dataset_includes_season
   end

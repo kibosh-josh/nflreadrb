@@ -25,7 +25,8 @@ module Nflreadrb
 
         before do
           allow(mock_dataframe).to receive(:filter).and_return(mock_filtered_dataframe)
-          allow(mock_filtered_dataframe).to receive(:select).with(['player_id', 'stats']).and_return(mock_selected_dataframe)
+          allow(mock_filtered_dataframe).to receive(:select).with(%w[player_id
+                                                                     stats]).and_return(mock_selected_dataframe)
         end
 
         it 'successfully filters by the default season column, slices columns, and returns an array' do
@@ -53,7 +54,7 @@ module Nflreadrb
 
           before do
             allow(mock_dataframe).to receive(:filter).and_return(mock_filtered_dataframe)
-            allow(mock_filtered_dataframe).to receive(:select).with(['player_id', 'stats']).and_return(mock_selected_dataframe)
+            allow(mock_filtered_dataframe).to receive(:select).with(%w[player_id stats]).and_return(mock_selected_dataframe)
           end
 
           it 'successfully filters by the default season column, slices columns, and returns an array' do
@@ -64,7 +65,9 @@ module Nflreadrb
 
       context 'when the targeted URL returns a network error' do
         before do
-          allow(LocalCache).to receive(:path_for).with(url).and_raise(Error.new("Failed to fetch data from url: #{url}: 404 Not Found"))
+          allow(LocalCache).to receive(:path_for).with(url).and_raise(
+            Error.new("Failed to fetch data from url: #{url}: 404 Not Found")
+          )
         end
 
         it 'rescues the exception and raises a custom gem error containing the broken URL' do
