@@ -11,6 +11,7 @@ require_relative 'nflreadrb/weekly_rosters'
 require_relative 'nflreadrb/injuries'
 require_relative 'nflreadrb/schedules'
 require_relative 'nflreadrb/snap_counts'
+require_relative 'nflreadrb/depth_charts'
 
 module Nflreadrb
   class Error < StandardError; end
@@ -35,6 +36,10 @@ module Nflreadrb
 
     def load_snap_counts(year:, columns: nil)
       SnapCounts.load(year:, columns:)
+    end
+
+    def load_depth_charts(year:, columns: nil)
+      DepthCharts.load(year:, columns:)
     end
   end
 end
