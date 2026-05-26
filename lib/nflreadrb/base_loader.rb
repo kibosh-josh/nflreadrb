@@ -4,6 +4,7 @@ require_relative 'constants'
 require_relative 'parquet_loader'
 
 module Nflreadrb
+  # Base class for loading Parquet data, every other loading class inherits from this.
   class BaseLoader
     def initialize(year:, columns:)
       @year = year

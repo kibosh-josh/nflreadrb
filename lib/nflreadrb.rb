@@ -13,6 +13,7 @@ require_relative 'nflreadrb/schedules'
 require_relative 'nflreadrb/snap_counts'
 require_relative 'nflreadrb/depth_charts'
 
+# The entire public API of this gem.
 module Nflreadrb
   class Error < StandardError; end
   class NotFoundError < StandardError; end

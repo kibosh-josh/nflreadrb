@@ -5,6 +5,7 @@ require 'fileutils'
 require 'open-uri'
 
 module Nflreadrb
+  # Utility module for caching results from nflverse locally after the initial request is successful.
   module LocalCache
     CACHE_EXPIRY = 86400 # 24 hours
 

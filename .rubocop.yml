@@ -1,5 +1,6 @@
 AllCops:
   TargetRubyVersion: 3.2
+  NewCops: enable
 
 Style/StringLiterals:
   EnforcedStyle: single_quotes
@@ -21,21 +22,9 @@ Layout/LineLength:
   Max: 200
 
 Metrics/BlockLength:
-  AllowedMethods:
-    - describe
-    - context
-    - it
-    - shared_examples
-    - shared_examples_for
   Exclude:
     - "spec/**/*_spec.rb"
 
 Metrics/ModuleLength:
-  AllowedMethods:
-    - describe
-    - context
-    - it
-    - shared_examples
-    - shared_examples_for
   Exclude:
     - "spec/**/*_spec.rb"

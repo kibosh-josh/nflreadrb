@@ -3,6 +3,7 @@
 require_relative 'local_cache'
 
 module Nflreadrb
+  # Interface for loading the parquet data for a given url, year, and columns. Used by ever other data loading class via base loader.
   class ParquetLoader
     SEASON_FILTER = 'season'
 
