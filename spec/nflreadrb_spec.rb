@@ -183,7 +183,7 @@ module Nflreadrb
       subject { described_class.load_depth_charts(year:) }
 
       context 'default without passing in columns' do
-        it 'successfully fetches and parses snap count data for a specific year', :integration do
+        it 'successfully fetches and parses depth chart data for a specific year', :integration do
           expect(subject).to be_an(Array)
           expect(subject.length).to eq(554215)
 
@@ -206,6 +206,37 @@ module Nflreadrb
           expect(first_record.key?('pos_name')).to be true
           expect(first_record.key?('team')).to be false
           expect(first_record.key?('gsis_id')).to be false
+        end
+      end
+    end
+
+    describe '.load_pbp' do
+      subject { described_class.load_pbp(year:) }
+
+      context 'default without passing in columns' do
+        it 'successfully fetches and parses play by play data for a specific year', :integration do
+          expect(subject).to be_an(Array)
+          expect(subject.length).to eq(48771)
+
+          first_record = subject.first
+          expect(first_record['home_team']).to eq('NO')
+          expect(first_record['away_team']).to eq('ARI')
+        end
+      end
+
+      context 'with explicit columns requested' do
+        subject { described_class.load_pbp(year:, columns:) }
+
+        let(:columns) { [:game_seconds_remaining, :home_timeouts_remaining] }
+
+        it 'slices the returned hashes horizontally to contain only the requested keys', :integration do
+          expect(subject).to be_an(Array)
+
+          first_record = subject.first
+          expect(first_record['game_seconds_remaining']).to eq(3600.0)
+          expect(first_record['home_timeouts_remaining']).to eq(3)
+          expect(first_record.key?('home_team')).to be false
+          expect(first_record.key?('away_team')).to be false
         end
       end
     end

@@ -12,6 +12,7 @@ require_relative 'nflreadrb/injuries'
 require_relative 'nflreadrb/schedules'
 require_relative 'nflreadrb/snap_counts'
 require_relative 'nflreadrb/depth_charts'
+require_relative 'nflreadrb/play_by_play'
 
 # The entire public API of this gem.
 module Nflreadrb
@@ -41,6 +42,10 @@ module Nflreadrb
 
     def load_depth_charts(year:, columns: nil)
       DepthCharts.load(year:, columns:)
+    end
+
+    def load_pbp(year:, columns: nil)
+      PlayByPlay.load(year:, columns:)
     end
   end
 end
